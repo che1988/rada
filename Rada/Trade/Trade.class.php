@@ -35,7 +35,7 @@ class Trade extends TradeExt {
             throw new RadaException('你当前有未结束的交易');
         }
         
-        $order_num = substr(md5(makeRandomString(10)), 0, 20);
+        $order_num = substr(md5(makeRandomString(10).microtime(true)), 0, 20);
         $order_info = array(
             'order_num'     => $order_num,
             'user_id'       => $user_id,
@@ -93,14 +93,22 @@ class Trade extends TradeExt {
     }
     
     /**
-     * 成交订单
+     * 撮合订单，事务更新状态为进行时
      * @param unknown $buy_id
      * @param unknown $sell_id
      */
     public function dealOrder($buy_id, $sell_id) {
-        $res = D('Order')->where(array('id'=>$buy_id))->setField('status', TradeExt::TRADE_STATUS_GOING);
-        $res = D('Order')->where(array('id'=>$sell_id))->setField('status', TradeExt::TRADE_STATUS_GOING);
+        D('User')->startTrans();
         
+        $res_1 = D('Order')->where(array('id'=>$buy_id))->setField('status', TradeExt::TRADE_STATUS_GOING);
+        $res_2 = D('Order')->where(array('id'=>$sell_id))->setField('status', TradeExt::TRADE_STATUS_GOING);
+        
+        if (!$res_1 || !$res_2) {
+            D('User')->rollback();
+            throw new RadaException('系统错误');
+        } else {
+            D('User')->commit();
+        }
         // 更新用户信息,通知用户去继续交易
     }
 }
