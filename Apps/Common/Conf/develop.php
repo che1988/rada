@@ -2,10 +2,10 @@
 return array(
 	//********** Mysql数据库配置 **********
     // 数据库参数
-    'DB_TYPE' => 'pdo',
+    'DB_TYPE' => 'mysql',
     'DB_USER' => 'root',
     'DB_PWD' => 'password',
-    'DB_DSN' => 'mysql:host=192.168.1.124;dbname=rada;charset=utf8',
+    'DB_DSN' => 'mysql:host=192.168.231.129;dbname=db_rada;charset=utf8',
     'DB_PREFIX' => 'tb_',
     'DB_FIELDS_CACHE' => false, 
     

@@ -7,19 +7,7 @@ use Rada\Exception\RadaException;
  * @author 
  *
  */
-class User {
-    
-    /**
-     * 短信验证码缓存前缀
-     * @var unknown
-     */
-    const USER_REGISTER_SMS_PRIFIX = 'user:register_sms:';
-    
-    /**
-     * 用户缓存前缀
-     * @var unknown
-     */
-    const USER_INFO_PREFIX = 'user:info:';
+class User extends UserConst {
     
     /**
      * 验证手机号
@@ -79,18 +67,19 @@ class User {
      * @param unknown $safe_password 安全密码
      * @param unknown $mobile 手机号
      */
-    public function register($email, $password, $recommend, $recommend_leader, $area, $safe_password, $mobile) {
+    public function register($email, $password, $recommend, $recommend_leaderid, $area, $safe_password, $mobile) {
         $data = array(
             'email'                     => $email,
             'password'                  => $password,
-            'recommend_userid'         => $recommend,
-            'recommend_leader_userid'  => $recommend_leader,
+            'recommend_userid'          => $recommend,
+            'recommend_leaderid'        => $recommend_leaderid,
             'area'                      => $area,
             'safe_password'             => $safe_password,
             'mobile'                    => $mobile,
             'ctime'                     => date('Y-m-d H:i:s', NOW_TIME),
             'utime'                     => date('Y-m-d H:i:s', NOW_TIME),
-            'c_ip'                      => get_client_ip(1)
+            'c_ip'                      => get_client_ip(1),
+            'status'                    => 1
         );
         $id = D('User')->add($data);
         if (!$id)

@@ -5,7 +5,7 @@ namespace Rada\Trade;
  * @author 
  *
  */
-class TradeExt {
+class TradeConst {
     
     /**
      * 买信息前缀
@@ -18,6 +18,12 @@ class TradeExt {
      * @var unknown
      */
     const TRADE_INFO_SELL_PREFIX = 'trade:info_sell:';
+    
+    /**
+     * 用户交易信息前缀
+     * @var unknown
+     */
+    const TRADE_USER_STATUS_PREFIX = 'user:trade_status:';
     
     /**
      * 买
@@ -48,4 +54,10 @@ class TradeExt {
      * @var unknown
      */
     const TRADE_STATUS_CLOSE = 3;
+
+    /**
+     * 交易信息状态（完成）
+     * @var unknown
+     */
+    const TRADE_STATUS_DONE = 4;
 }

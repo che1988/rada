@@ -81,7 +81,7 @@ function makeRandomString($length = 8, $type = 'all') {
  * @param strint $val
  * @param integer $lock_time
  */
-function lock_action($key, $wait_time=0, $val='', $lock_time=300) {
+function lock_action($key, $wait_time=0, $val='', $lock_time=60) {
         // 构造锁名称，锁内容
         $controller_name = strtolower(CONTROLLER_NAME);
         $action_name = strtolower(ACTION_NAME);

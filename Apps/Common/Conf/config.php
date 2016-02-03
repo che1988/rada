@@ -12,6 +12,6 @@ return array(
 
         // 注册命名空间
         'AUTOLOAD_NAMESPACE' => array (
-                'Stock' => dirname ( THINK_PATH ) . '/Rada'
+                'Rada' => dirname ( THINK_PATH ) . '/Rada'
         )
 );
