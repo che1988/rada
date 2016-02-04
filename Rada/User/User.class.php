@@ -67,11 +67,11 @@ class User extends UserConst {
      * @param unknown $safe_password 安全密码
      * @param unknown $mobile 手机号
      */
-    public function register($email, $password, $recommend, $recommend_leaderid, $area, $safe_password, $mobile) {
+    public function register($email, $password, $area, $safe_password, $mobile, $recommend_userid=0, $recommend_leaderid=0) {
         $data = array(
             'email'                     => $email,
             'password'                  => $password,
-            'recommend_userid'          => $recommend,
+            'recommend_userid'          => $recommend_userid,
             'recommend_leaderid'        => $recommend_leaderid,
             'area'                      => $area,
             'safe_password'             => $safe_password,
@@ -81,9 +81,23 @@ class User extends UserConst {
             'c_ip'                      => get_client_ip(1),
             'status'                    => 1
         );
+        D('User')->startTrans();
         $id = D('User')->add($data);
-        if (!$id)
+        
+        // 创建账户
+        $account = array(
+            'user_id'   => $id,
+            'coin'      => 5000,
+            'coin_tic'  => 5000,
+            'status'    => 1
+        );
+        $account_id = D('Account')->add($account);
+        if (!$id || !$account) {
+            D('User')->rollback();
             throw new RadaException('系统错误，注册失败');
+        } else {
+            D('User')->commit();
+        }
         
         return true;
     }
@@ -103,6 +117,14 @@ class User extends UserConst {
             $redis->hMset(self::USER_INFO_PREFIX.$user_id, $info);
             $redis->expire(self::USER_INFO_PREFIX.$user_id, 864000);
         }
+        return $info;
+    }
+    
+    /**
+     * 根据emali查找用户
+     */
+    public function verifyEmail($email) {
+        $info = D('User')->where(array('email'=>$email))->find();
         return $info;
     }
 }

@@ -25,6 +25,10 @@ class TradeConst {
      */
     const TRADE_USER_STATUS_PREFIX = 'user:trade_status:';
     
+    const TRADE_REQUIREMENT_INFO = 'trade:requirement:';
+    
+    const TRADE_REQUIREMENT_ORDER = 'trade:requirment_order:';
+    
     /**
      * 买
      * @var unknown

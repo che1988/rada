@@ -9,6 +9,17 @@ use Rada\Exception\RadaException;
  */
 class Trade {
     
+    public function makeTrade($user_id, $type, $num) {
+        $redis = getRedisEx('TRADE_CONFIG');
+        $data = array(
+            'user_id'   => $user_id,
+            'type'      => $type,
+            'num'       => $num
+        );
+        $redis->hSet(TradeConst::TRADE_REQUIREMENT_INFO.$type, $user_id, json_encode($data));
+        $redis->zAdd(TradeConst::TRADE_REQUIREMENT_ORDER.$type, NOW_TIME, $user_id);
+    }
+    
     /**
      * 生成订单
      * @param unknown $user_id
@@ -17,32 +28,20 @@ class Trade {
      * @throws RadaException
      * @return boolean
      */
-    public function makeOrder($user_id, $num, $op_type='buy') {
-        $lock_key = 'makeOrder'.$user_id;
+    public function makeOrder($buy_id, $sell_id, $num) {
+        $lock_key = 'makeOrder'.$buy_id.$sell_id;
         // 加锁
         $lock = lock_action($lock_key);
         if (!$lock)
             throw new RadaException('系统繁忙稍后再试');
         
-        // 确定用户没有任何进行的交易
-        $status = D('Order')->where(array(
-                'user_id'   => $user_id,
-                'op_type'   => 'buy',
-                'status'    => array('in'=> array(TradeConst::TRADE_STATUS_OPEN, TradeConst::TRADE_STATUS_GOING))
-            ))->select();
-        if ($status) {
-            unlock_action($lock_key);
-            throw new RadaException('你当前有未结束的交易');
-        }
-        
         $order_info = array(
-            'user_id'       => $user_id,
-            'op_type'       => $op_type,
+            'buy_uid'       => $buy_id,
+            'sell_uid'      => $sell_id,
             'num'           => $num,
             'account'       => 0,
-            'status'        => TradeConst::TRADE_STATUS_OPEN,
+            'status'        => TradeConst::TRADE_STATUS_GOING,
             'ctime'         => date('Y-m-d H:i:s', NOW_TIME),
-            'relation_id'   => 0,
             'photo_id'      => 0, 
             'admin_id'      => 0,
             'admin_info'    => ''
@@ -53,6 +52,10 @@ class Trade {
             unlock_action($lock_key);
             throw new RadaException('系统繁忙，稍后再试');
         }
+        
+        $redis = getRedisEx('TRADE_CACHE');
+        $redis->hSet(TradeConst::TRADE_USER_STATUS_PREFIX.'buy', $buy_id, $res);
+        $redis->hSet(TradeConst::TRADE_USER_STATUS_PREFIX.'sell', $sell_id, $res);
         
         unlock_action($lock_key);
         return true;
@@ -67,20 +70,20 @@ class Trade {
         if (!$lock)
             return true;
         
-        $buy_orders = D('Order')->where(
-                array('op_type'=>TradeConst::TRADE_OP_TYPE_BUY, 'status'=> TradeConst::TRADE_STATUS_OPEN)
-            )->order('ctime asc')->select();
-        
-        $sell_orders = D('Order')->where(
-                array('op_type'=>TradeConst::TRADE_OP_TYPE_SELL, 'status'=> TradeConst::TRADE_STATUS_OPEN)
-            )->order('ctime asc')->select();
+        $redis = getRedisEx('TRADE_CACHE');
+        $buy_orders = $redis->hGetAll(TradeConst::TRADE_REQUIREMENT_INFO . 'buy');
+        $sell_orders = $redis->hGetAll(TradeConst::TRADE_REQUIREMENT_INFO . 'sell');
         
         foreach ($buy_orders as $buy_order) {
             foreach ($sell_orders as $key => $sell_order) {
+                $buy_order = json_decode($buy_order, true);
+                $sell_order = json_decode($sell_order, true);
                 if ($buy_order['num'] == $sell_order['num']) {
                     try {
-                        $this->dealOrder($buy_order['id'], $sell_order['id']);
+                        $this->makeOrder($buy_order['user_id'], $sell_order['user_id'], $buy_order['num']);
                         unset($sell_orders[$key]);
+                        $redis->hDel(TradeConst::TRADE_REQUIREMENT_INFO.'buy', $buy_order['user_id']);
+                        $redis->hDel(TradeConst::TRADE_REQUIREMENT_INFO.'sell', $sell_order['user_id']);
                     } catch (\Exception $e) {
                         unlock_action($lock_key);
                         return false;
@@ -131,7 +134,7 @@ class Trade {
 	 * @param unknown $user_id
 	 * @param string $base64_attach
 	 */
-	public function attach($user_id, $base64_attach='') {
+	public function attach($user_id,$order_id, $base64_attach='') {
 		$user_id = (int)$user_id;
 		// 获取附件图像
 		if (!empty($base64_attach)) {
@@ -180,7 +183,7 @@ class Trade {
 		$image['hash'] = sha1($image['data']);
 		$image['save_name'] = '/Attach/' . date('Y/m/d', NOW_TIME) . '/' . $image['hash'] . '.' . $image['ext'];
 		
-		$true_path = APP_PATH . '../Public' . $image['save_name'];
+		$true_path = '.'. $image['save_name'];
 	
 		// 自动创建日志目录
 		$attach_dir = dirname($true_path);
@@ -208,6 +211,8 @@ class Trade {
 	
 		if (empty($attach_id))
 			throw new RadaException('图片上传失败，换张试试吧。');
+		
+		D('Order')->where(array('id'=>$order_id))->setField('photo_id',$attach_id);
 	
 		$data['attach_id'] = $attach_id;
 		$data['attach_url'] = C('WEIBA_ATTACH_IMAGE_PATH') . $attach['save_name'];
@@ -215,7 +220,59 @@ class Trade {
 	
 	}
 	
-	public function sellerConfirmAction() {
+	/**
+	 * 卖家确认发货
+	 */
+	public function sellerConfirmAction($sell_id) {
+	    $sell_order = D('Order')->where(array('id'=>$sell_id))->select();
+	    if (empty($sell_order))
+	        throw new RadaException('系统错误');
+
+	    $buy_id = $sell_order['relation_id'];
+	    $buy_order = D('Order')->find($buy_id);
 	    
+	    D('Order')->startTrans();
+	    
+	    // 更新状态
+	    $map_1 = array('id'=>$buy_id, 'status'=>TradeConst::TRADE_STATUS_OPEN);
+	    $save_1 = array(
+	        'status'        => TradeConst::TRADE_STATUS_DONE,
+	        'relation_id'   => $sell_id
+	    );
+	    $res_1 = D('Order')->where($map_1)->save($save_1);
+	    
+	    $map_2 = array('id'=>$sell_id, 'status'=>TradeConst::TRADE_STATUS_OPEN);
+	    $save_2 = array(
+	        'status'        => TradeConst::TRADE_STATUS_DONE,
+	        'relation_id'   => $buy_id
+	    );
+	    $res_2 = D('Order')->where($map_2)->save($save_2);
+	    
+	    // 划钱
+	    $res_3 = D('Account')->where(array('user_id'=>$sell_order['user_id']))->setDec('coin', $sell_order['num']);
+	    $res_4 = D('Account')->where(array('user_id'=>$buy_order['user_id']))->setInc('coin_tic', $sell_order['num']);
+	    
+	    // 给上级分钱
+	    
+	    if (!$res_1 || !$res_2 || $res_3 || $res_4) {
+	        D('User')->rollback();
+	        throw new RadaException('系统错误');
+	    } else {
+	        D('User')->commit();
+	    }
+	    // 更新用户信息,通知用户去继续交易
+	    $redis = getRedisEx('TRADE_CACHE');
+	    $redis->del(TradeConst::TRADE_USER_STATUS_PREFIX.$buy_id);
+	    $redis->del(TradeConst::TRADE_USER_STATUS_PREFIX.$sell_id);
+	}
+	
+	public function checkUserOrderId($user_id) {
+	    $redis = getRedisEx('TRADE_CACHE');
+	    $buy_order = $redis->hGet(TradeConst::TRADE_USER_STATUS_PREFIX.'buy',$user_id);
+	    $sell_order = $redis->hGet(TradeConst::TRADE_USER_STATUS_PREFIX.'sell',$user_id);
+	    return array(
+	        'buy_order'    => $buy_order,
+	        'sell_order'   => $sell_order
+	    );
 	}
 }
