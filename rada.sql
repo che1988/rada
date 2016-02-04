@@ -11,11 +11,42 @@
  Target Server Version : 50547
  File Encoding         : utf-8
 
- Date: 01/31/2016 22:34:55 PM
+ Date: 02/04/2016 09:33:12 AM
 */
 
 SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+--  Table structure for `tb_account`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_account`;
+CREATE TABLE `tb_account` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `coin` double(30,0) NOT NULL,
+  `coin_tic` double(30,0) NOT NULL,
+  `status` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+--  Table structure for `tb_attach`
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_attach`;
+CREATE TABLE `tb_attach` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `ctime` datetime NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `size` varchar(20) NOT NULL,
+  `extension` varchar(20) NOT NULL,
+  `hash` varchar(40) NOT NULL,
+  `status` tinyint(1) NOT NULL,
+  `save_name` varchar(255) NOT NULL,
+  `width` varchar(20) NOT NULL,
+  `height` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tb_order`
@@ -23,19 +54,17 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `tb_order`;
 CREATE TABLE `tb_order` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `order_num` varchar(20) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `op_type` enum('buy','sell') NOT NULL,
+  `buy_uid` int(11) DEFAULT NULL,
+  `sell_uid` int(11) NOT NULL,
   `num` bigint(20) NOT NULL DEFAULT '0',
   `account` bigint(20) DEFAULT '0',
   `status` tinyint(4) DEFAULT '1',
   `ctime` datetime DEFAULT NULL,
-  `relation_id` int(11) DEFAULT '0',
   `photo_id` int(11) DEFAULT '0',
   `admin_id` int(11) DEFAULT NULL,
   `admin_info` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 --  Table structure for `tb_user`
@@ -55,6 +84,6 @@ CREATE TABLE `tb_user` (
   `c_ip` int(50) NOT NULL DEFAULT '0',
   `status` enum('open','frosen','down') DEFAULT 'open',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 SET FOREIGN_KEY_CHECKS = 1;
