@@ -19,7 +19,7 @@
 					<table class="table table-bordered table-striped">
 						<thead>
 							<tr>
-								<th>用户id</th>
+								<th>用户email</th>
 								<th>数量</th>
 								<th>时间</th>
 								<th>操作</th>
@@ -28,7 +28,7 @@
 						<tbody>
 							<volist name="sell_trades" id="list">
 								<tr>
-									<td>{$list.0}</td>
+									<td>{$list.0|getUserInfo}</td>
 									<td>{$list.1}</td>
 									<td>{$list.2|date='Y-m-d H:i:s',###}</td>
 									<td>{$list.status}</td>

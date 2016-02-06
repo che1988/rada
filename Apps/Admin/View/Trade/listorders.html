@@ -19,8 +19,8 @@
 					<table class="table table-bordered table-striped">
 						<thead>
 							<tr>
-								<th>购买用户id</th>
-								<th>卖出用户id</th>
+								<th>购买用户email</th>
+								<th>卖出用户email</th>
 								<th>数量</th>
 								<th>创建时间</th>
 								<th>凭证图片id</th>
@@ -30,8 +30,8 @@
 						<tbody>
 							<volist name="lists" id="list">
 								<tr>
-									<td>{$list.buy_uid}</td>
-									<td>{$list.sell_uid}</td>
+									<td>{$list.buy_uid|getUserInfo}</td>
+									<td>{$list.sell_uid|getUserInfo}</td>
 									<td>{$list.num}</td>
 									<td>{$list.ctime}</td>
 									<td>{$list.photo_id}</td>

@@ -1,5 +1,6 @@
 <?php
 use Rada\RadaTools\Redis;
+use Rada\User\User;
 /**
  * 返回redis到句柄
  * @param string $host
@@ -147,4 +148,10 @@ function unlock_action($key) {
  */
 function sendSms($mobile, $content) {
     
+}
+
+function getUserInfo($user_id, $field='email') {
+    $user = new User();
+    $user_info = $user->getUserInfo($user_id);
+    return $user_info[$field];
 }
