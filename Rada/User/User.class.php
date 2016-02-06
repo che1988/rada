@@ -79,6 +79,7 @@ class User extends UserConst {
             'ctime'                     => date('Y-m-d H:i:s', NOW_TIME),
             'utime'                     => date('Y-m-d H:i:s', NOW_TIME),
             'c_ip'                      => get_client_ip(1),
+            'bank_info'                 => '',
             'status'                    => 1
         );
         D('User')->startTrans();
@@ -106,10 +107,10 @@ class User extends UserConst {
      * 获取用户信息，优先使用缓存
      * @param unknown $user_id
      */
-    public static function getUserInfo($user_id) {
+    public static function getUserInfo($user_id, $refresh=false) {
         $redis = getRedisEx('USER_CACHE');
         $info = $redis->hGetAll(self::USER_INFO_PREFIX . $user_id);
-        if (empty($info)) {
+        if (empty($info) || $refresh==true) {
             $info = D('User')->find($user_id);
             if (empty($info))
                 throw new RadaException('没有该用户');

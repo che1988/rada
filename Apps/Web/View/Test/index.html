@@ -6,12 +6,30 @@
 </head>
 <body>
 <h1>我要主页</h1>
-<a href='/Test/index'>主页</a>|<a href='/Test/register'>注册</a>|<a href='/Test/login'>登录</a>|<a href='/Test/logout'>登出</a>|
-<a href='/Test/buy'>我要买</a>|<a href='/Test/sell'>我要卖</a>|<a href='/Test/cuohe'>撮合</a>
-|<a href='/Test/upload'>上传凭证</a>|<a href='/Test/viewPic'>查看凭证</a><br />
-当前用户信息: email:{$user.email}      id:{$user.id}<br />
-当前账户信息: 金币:{$account.coin}      金币券:{$account.coin_tic}<br />
-当前买订单{$order.buy_order}<br />
-当前卖订单{$order.sell_order}<br />
+<a href='/Test/logout'>登出</a>|<a href='/Test/buy'>我要买</a>|<a href='/Test/sell'>我要卖</a>
+<a href='/Test/unfinishedOrder'>我的未完成订单</a>
+<br />
+<hr />
+当前用户信息: <br />
+email:{$user.email}<br />
+id:{$user.id}<br />
+<hr />
+当前账户信息: 金币:{$account.coin}|金币券:{$account.coin_tic}<br />
+<hr />
+<h2>交易大厅</h2>
+当前买订单:<br />
+<foreach name='buy_trades' item="info">
+	user_id:{$info.0}<br />
+	数量:{$info.1}<br />
+	时间:{$info.2|date='Y-m-d H:i:s',###}<br /><br />
+</foreach>
+<hr />
+<br />
+当前卖订单:<br />
+<foreach name='sell_trades' item="info">
+	user_id:{$info.0}<br />
+	数量:{$info.1}<br />
+	时间:{$info.2|date='Y-m-d H:i:s',###}<br /><br />
+</foreach>
 </body>
 </html>

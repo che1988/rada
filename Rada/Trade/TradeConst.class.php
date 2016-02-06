@@ -8,6 +8,24 @@ namespace Rada\Trade;
 class TradeConst {
     
     /**
+     * 买队列
+     * @var unknown
+     */
+    const TRADE_LIST_BUY = 'trade:list:buy';
+    
+    /**
+     * 卖队列
+     * @var unknown
+     */
+    const TRADE_LIST_SELL = 'trade:list:sell';
+    
+    /**
+     * 用户尚未完成的订单
+     * @var unknown
+     */
+    const UNFINISHED_ORDER_PREFIX = 'trade:user:unfinished_order:';
+    
+    /**
      * 买信息前缀
      * @var unknown
      */

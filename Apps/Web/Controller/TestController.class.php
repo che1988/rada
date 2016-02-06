@@ -3,6 +3,7 @@ namespace Web\Controller;
 use Think\Controller;
 use Rada\Trade\Trade;
 use Rada\User\User;
+use Rada\Trade\TradeConst;
 
 class TestController extends Controller {
 	public function registerAction() {
@@ -72,6 +73,42 @@ class TestController extends Controller {
 	    }
 	}
 	
+	/**
+	 * 主页
+	 */
+	public function indexAction() {
+	    $session = session('login');
+	    if (empty($session))
+	        $this->redirect('Test/login');
+	
+	    $user_id = $session['id'];
+	    $account = D('Account')->where(array('user_id'=>$user_id))->find();
+	    $this->assign('account', $account);
+	    
+	    $trade = new Trade();
+	    $order = $trade->getUserUnfinishedOrder($user_id);
+	    $this->assign('order',$order);
+	    $this->assign('user', $session);
+
+	    $buy_trades = $sell_trades = array();
+	    $temp_btrades = $trade->listTrade(TradeConst::TRADE_OP_TYPE_BUY);
+	    $temp_strades = $trade->listTrade(TradeConst::TRADE_OP_TYPE_SELL);
+	    if (!empty($temp_btrades)) {
+	        foreach ($temp_btrades as $tinfo) {
+	            array_push($buy_trades, explode('|', $tinfo));
+	        }
+	    }
+	    if (!empty($temp_strades)) {
+	        foreach ($temp_strades as $tinfo) {
+	            array_push($sell_trades, explode('|', $tinfo));
+	        }
+	    }
+	    
+	    $this->assign('buy_trades', $buy_trades);
+	    $this->assign('sell_trades', $sell_trades);
+	    $this->display();
+	}
+	
 	public function logoutAction() {
 	    session('login', null);
 	    $this->redirect('Test/login');
@@ -111,6 +148,11 @@ class TestController extends Controller {
 	        $this->redirect('Test/login');
 	    
 	    $user_id = $session['id'];
+	    $user_sdk = new User();
+	    $user_info = $user_sdk->getUserInfo($user_id, true);
+	    if (empty($user_info['bank_info']))
+	        $this->redirect('Test/makeBankInfo');
+	    
 	    if (IS_POST) {
 	        $num = I('post.num');
 	        if (empty($num))
@@ -127,31 +169,70 @@ class TestController extends Controller {
 	}
 	
 	/**
-	 * 撮合
+	 * 完善银行信息
 	 */
-	public function cuoheAction() {
-	    $trade = new Trade();
-	    $trade->cuohe();
+	public function makeBankInfoAction() {
+	    $session = session('login');
+	    if (empty($session))
+	        $this->redirect('Test/login');
+	    $user_id = $session['id'];
+	    
+	    if (IS_POST) {
+	        $bank_name = I('post.bank_name');
+	        $card_num = I('post.card_num');
+	        $bank_info = array(
+	            'bank_name'=> $bank_name,
+	            'card_num' => $card_num
+	        );
+	        $update = array('bank_info'=>json_encode($bank_info));
+	        D('User')->where(array('id'=>$user_id))->save($update);
+	        $this->redirect('Test/index');
+	    } else {
+	        $this->display();
+	    }
 	}
 	
-	/**
-	 * 主页
-	 */
-	public function indexAction() {
+	public function unfinishedOrderAction() {
 	    $session = session('login');
 	    if (empty($session))
 	        $this->redirect('Test/login');
 	     
 	    $user_id = $session['id'];
-	    $account = D('Account')->where(array('user_id'=>$user_id))->find();
-	    $this->assign('account', $account);
-	    
 	    $trade = new Trade();
-	    $order = $trade->checkUserOrderId($user_id);
-	    $this->assign('order',$order);
-	    $this->assign('user', $session);
+	    $orders = $trade->getUserUnfinishedOrder($user_id);
+	    
+	    $buy_orders = json_decode($orders['buy'], true);
+	    $sell_orders = json_decode($orders['sell'], true);
+	   
+	    $b_orders = $s_orders = array();
+	    if (!empty($buy_orders)) {
+	        foreach ($buy_orders as $o_id) {
+	            array_push($b_orders, $trade->getOrderInfo($o_id));
+	        }
+	    }
+	    if (!empty($sell_orders)) {
+	        foreach ($sell_orders as $o_id) {
+	            array_push($s_orders, $trade->getOrderInfo($o_id));
+	        }
+	    }
+	    
+	    $this->assign('buy_orders', $b_orders);
+	    $this->assign('sell_orders', $s_orders);
 	    $this->display();
 	}
+	
+	/**
+	 * 撮合
+	 */
+	public function cuoheAction() {
+	    $trade = new Trade();
+	    while (time() < NOW_TIME + 55) {
+	        $trade->cuohe();
+	        sleep(1);
+	    }
+	}
+	
+	
 	
 	public function uploadAction() {
 	    $session = session('login');
@@ -160,23 +241,21 @@ class TestController extends Controller {
 	    
 	    $user_id = $session['id'];
 	    
-	    $trade = new Trade();
-	    $order = $trade->checkUserOrderId($user_id);
-	    if (empty($order['buy_order']))
-	        $this->error('你当前没有可买订单');
-	    
 	    if (IS_POST) {
+	        $order_id = I('get.order_id','');
+	        if (empty($order_id))
+	            $this->error('参数错误');
+
 	        $trade = new Trade();
-	        $return = $trade->attach($user_id, $order['buy_order']);
-	        $this->redirect('Test/login');
+	        $order_info = $trade->getOrderInfo($order_id);
+	        if (empty($order_info) || $order_info['buy_uid']!=$user_id || !empty($order_info['photo_id']))
+	            $this->error('系统错误');
+	        
+	        $return = $trade->attach($user_id, $order_id);
+	        $this->success('上传成功',U('Test/index'));
+	        return;
 	    } else {
-	        echo <<<EOF
-<form action="" method='post' enctype="multipart/form-data">
-<input type='file' name='attach' />
-	            <input type='submit'>
-	        </form>
-EOF;
-	            
+	        $this->display();
 	    }
 	}
 	
@@ -188,16 +267,21 @@ EOF;
 	    $user_id = $session['id'];
 	     
 	    $trade = new Trade();
-	    $order = $trade->checkUserOrderId($user_id);
-	    if (empty($order['sell_order']))
-	        $this->error('你当前没有可卖订单');
-	    
-	    $order_info = D('Order')->find($order['sell_order']);
-	    if (empty($order_info['photo_id']))
-	        $this->error('当前买家还未上传凭证');
+	    $order_id = I('get.order_id');
+	    if (empty($order_id))
+	        $this->error('参数错误');
+	    $order_info = $trade->getOrderInfo($order_id);
+	    if (empty($order_info) || empty($order_info['photo_id']))
+	        $this->error('系统错误');
 	    
 	    $photo = D('Attach')->find($order_info['photo_id']);
 	    $this->assign('photo', $photo);
 	    $this->display();
+	}
+	
+	public function testAction() {
+	    $redis = getRedisEx('TRADE_CACHE');
+	    $index = $redis->lGet('list',1);
+	    dump($index);
 	}
 }

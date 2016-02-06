@@ -12,7 +12,7 @@ return array(
     // 缓存参数
     'MIXED_CACHE' => array(
         'DATA_CACHE_TYPE' => 'Redis',
-        'REDIS_HOST' => '192.168.1.124',
+        'REDIS_HOST' => '127.0.0.1',
         'REDIS_PORT' => 6379,
         'REDIS_DB' => 0
     ),
