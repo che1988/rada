@@ -1,9 +1,9 @@
 $(document).ready(function() {
 	$(document).click(function(){
-		if($(".o_set_up i").hasClass('on')){
+		/*if($(".o_set_up i").hasClass('on')){
 			$(".o_set_up ul").addClass('none');
 			$(".o_set_up i").removeClass('on');
-		}
+		}*/
 		if($(".payment ul").hasClass('show')){
 			$(".payment ul").removeClass('show');
 		};
@@ -12,12 +12,12 @@ $(document).ready(function() {
     $(".o_set_up i").click(function(){
 		$(this).addClass('on');
 		$(this).parent('div.o_set_up').find('ul').removeClass('none');
-		return false;
+		//return false;
 	});
 	$(".o_set_up ul li").click(function(){
 		$(this).parents('div.o_set_up').find('i').removeClass('on');
 		$(this).parent('ul').addClass('none');
-		return false;
+		//return false;
 	});
 	/*货币资产*/
 	$(".o_assets_left ul li .o_assets_left_show").click(function(){
