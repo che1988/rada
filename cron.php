@@ -26,7 +26,7 @@ define('MODE_NAME', 'cli');
 
 define('BUILD_DIR_SECURE', false);
 
-define('RUNTIME_PATH', THXG_CLI_PATH.'/Runtime/');
+define('RUNTIME_PATH', RADA_CLI_PATH.'/Runtime/');
 
 // 定义应用目录
 define('APP_PATH', RADA_CLI_PATH.'/Apps/');
