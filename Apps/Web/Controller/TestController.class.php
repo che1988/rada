@@ -7,7 +7,7 @@ use Rada\Trade\TradeConst;
 
 class TestController extends Controller {
     public function _initialize() {
-        if (ACTION_NAME != 'login' && ACTION_NAME !='register') {
+        if (ACTION_NAME != 'login' && ACTION_NAME !='register' && ACTION_NAME !='cuohe') {
             $session = session('login');
             if (empty($session))
                 $this->redirect('Test/login');
