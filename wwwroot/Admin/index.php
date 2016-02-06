@@ -14,24 +14,25 @@
 // 检测PHP环境
 if(version_compare(PHP_VERSION,'5.3.0','<'))  die('require PHP > 5.3.0 !');
 
-define('RADAL_CLI_PATH', dirname(__FILE__)); 
-
 // 运行环境(develop, produce, sandbox)
 define('APP_STATUS', 'develop');
+
+// 绑定入口
+define('BIND_MODULE', 'Admin');
 
 // 开启调试模式 建议开发阶段开启 部署阶段注释或者设为false
 define('APP_DEBUG', true);
 
-define('MODE_NAME', 'cli');
-
-define('BUILD_DIR_SECURE', false);
-
-define('RUNTIME_PATH', THXG_CLI_PATH.'/Runtime/');
-
 // 定义应用目录
-define('APP_PATH', THXG_CLI_PATH.'/Apps/');
+define('APP_PATH', '../../Apps/');
+
+// 定义运行时目录
+define('RUNTIME_PATH', '../../Runtime/');
+
+// 生成安全文件
+define('BUILD_DIR_SECURE', False);
 
 // 引入ThinkPHP入口文件
-require RADAL_CLI_PATH.'/ThinkPHP/ThinkPHP.php';
+require '../../ThinkPHP/ThinkPHP.php';
 
 // 亲^_^ 后面不需要任何代码了 就是如此简单

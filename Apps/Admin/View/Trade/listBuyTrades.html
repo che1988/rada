@@ -1,0 +1,44 @@
+<extend name="Public/base" />
+
+<block name="content">
+	<div id="content-header">
+		<div id="breadcrumb"> <a href="/" title="首页" class="tip-bottom"><i class="icon-home"></i>首页</a></div>
+		<h1>交易列表</h1>
+	</div>
+	
+	<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span12">
+			<div class="widget-box">
+				<div class="widget-title">
+					<span class="icon"><i class="icon-th"></i></span>
+					<h5>购买列表</h5>
+					<div class="buttons"></div>
+				</div>
+				<div class="widget-content nopadding">
+					<table class="table table-bordered table-striped">
+						<thead>
+							<tr>
+								<th>用户id</th>
+								<th>数量</th>
+								<th>时间</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<volist name="buy_trades" id="list">
+								<tr>
+									<td>{$list.0}</td>
+									<td>{$list.1}</td>
+									<td>{$list.2|date='Y-m-d H:i:s',###}</td>
+									<td>{$list.status}</td>
+								</tr>
+							</volist>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+</block>

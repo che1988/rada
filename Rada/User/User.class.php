@@ -72,7 +72,7 @@ class User extends UserConst {
             'email'                     => $email,
             'password'                  => $password,
             'recommend_userid'          => $recommend_userid,
-            'recommend_leaderid'        => $recommend_leaderid,
+            'recommend_leader_userid'   => $recommend_leaderid,
             'area'                      => $area,
             'safe_password'             => $safe_password,
             'mobile'                    => $mobile,
