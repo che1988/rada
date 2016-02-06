@@ -60,7 +60,12 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 .o_logo{
 	float:left;
-	margin-top:10px;
+	height:50px;
+	line-height:50px;
+	color: #333;
+    font-size: 30px;
+    font-weight: bold;
+	margin-right:10px;
 }
 .o_top_list,
 .o_top_list li{
@@ -98,16 +103,16 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 .o_set_up i{
 	cursor:pointer;
-	background:url(../image/o_set_up.png) no-repeat 80%;
+	background:url(../image/o_set_up.png) no-repeat 88%;
 }
 .o_set_up i.on{
-	background:#E7E7E7 url(../image/o_set_ups.png) no-repeat 80%;
+	background:#E7E7E7 url(../image/o_set_ups.png) no-repeat 88%;
 	color:#333;
 }
 .o_set_up ul{
 	position:absolute;
 	top:50px;
-	left:-94px;
+	left:-66px;
 	float:left;
 	width:160px;
 	background-color: #ffffff;

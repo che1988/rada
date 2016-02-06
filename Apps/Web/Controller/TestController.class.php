@@ -6,6 +6,18 @@ use Rada\User\User;
 use Rada\Trade\TradeConst;
 
 class TestController extends Controller {
+    public function _initialize() {
+        if (ACTION_NAME != 'login' && ACTION_NAME !='register') {
+            $session = session('login');
+            if (empty($session))
+                $this->redirect('Test/login');
+            
+            $user_id = $session['id'];
+            $user = new User();
+            $this->assign('user_info', $user->getUserInfo($user_id));
+        }
+    }
+    
 	public function registerAction() {
 	    if (IS_POST) {
 	        $email = I('post.email', '');

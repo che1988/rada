@@ -1,16 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+<meta charset="utf-8" />
+<title>我要买</title>
+<link rel="stylesheet" href="/public/css/public.css">
+<link rel="stylesheet" href="/public/css/information.css">
 </head>
 <body>
-<h1>我要买</h1>
-<a href='/Test/index'>主页</a><br />
-当前账户信息: 金币:{$account.coin}  金币券:{$account.coin_tic}
-<form action="" method='post'>
-数量:<input type='text' name='num' value='' /><br />
-<input type='submit'>
-</form>
+<div class="o_top">
+  <div class="container">
+	<a class="o_logo" href="#this">LOGO</a>
+    <ul class="o_top_list">
+    	<li><a href="/Test/index">首页</a></li>
+        <li><a href="#this">个人团队</a></li>
+        <li class="cur"><a href="/Test/index">交易大厅</a></li>
+        <li><a href="#this">交易记录</a></li>
+        <li><a href="#this">银行账户</a></li>
+        <li><a href="#this">新闻通告</a></li>
+        <li><a href="#this">反馈</a></li>
+    </ul>
+    <div class="fr">
+    	<a class="o_visitor" href="#this">{$user_info.email}</a>
+        <div class="o_set_up">
+        	<i>个人资料</i>
+            <ul class="none">
+              <li><a href="#this">基本信息</a></li>
+              <li><a href="#this">联系信息</a></li>
+              <li><a href="#this">领导人信息</a></li>
+              <li><a href="#this">退出登录</a></li>
+            </ul>
+        </div>
+    </div>
+  </div>
+</div>
+<div class="o_content">
+	<!--基本信息-->
+    <div class="o_information">
+    	<div class="o_information_left">
+        	<ul>
+            	<li  class="active"><a href="#this">我要买</a></li>
+                <li><a href="/Test/sell">我要卖</a></li>
+                <li><a href="/Test/unfinishedOrder">已买订单</a></li>
+                <li><a href="/Test/unfinishedOrder">已卖订单</a></li>
+            </ul>
+        </div>
+        <div class="o_information_right">
+            <div class="o_information_account">当前账户信息:金币&nbsp;<em>{$account.coin}</em> &nbsp; 金币卷:<em>{$account.coin_tic}</em></div>
+            <form action="/Test/buy" method='post'>
+            <label class="o_information_number">
+            	<em>数&nbsp;量:</em>
+                <input type="text" name='num'>
+            </label>
+            <input class="o_information_determine" type="submit" value="确 定">
+            </form>
+            <!-- 
+        	<table class="table" cellpadding="0" cellspacing="0">
+            	<thead>
+                	<tr>
+                    	<th width="25%">订单号</th>
+                        <th width="25%">金币劵数量</th>
+                        <th width="25%">创建日期</th>
+                        <th width="25%">订单状态</th>
+                    </tr>
+                 </thead>
+                 <tbody>
+                     <tr>
+                     	<td>1</td>
+                        <td>1000</td>
+                        <td>2016/2/26</td>
+                        <td>等待交易</td>
+                     </tr>
+                 </tbody>
+             <tbody>
+            </tbody>
+          </table>
+           -->
+        </div>
+    </div>
+    <!--基本信息end-->
+</div>
+<footer class="footer">
+  <div class="container">
+    <div style="text-align:left" class="col-xs-12 col-sm-3"><span>版本: 0.6.1-c472edb7</span></div>
+    <div class="col-xs-12 col-sm-9 right-links">
+      <p class="t1"><a href="#this" target="_blank">首页</a><a href="#this" target="_blank">**百科</a><a href="#this" target="_blank">实时行情</a><a href="#this" target="_blank">开发者资源</a><a href="#this" target="_blank">新闻中心</a><a href="#this" target="_blank">信息查询</a><a href="#this" target="_blank">客户端</a></p>
+      <p class="t2"><a href="#this" target="_blank">帮助</a><a href="#this" target="_blank">遵从法律</a><a href="javascript:void(0)"><i class="icon fa fa-skype"></i>在线客服</a><a href="#this">邮件反馈</a><a href="javascript:void(0)" class="lang curLang">中文</a><a href="javascript:void(0)"class="lang">English</a></p>
+    </div>
+    <p class="cr"><a href="#this" target="_blank">Radarlab.org ©2016</a></p>
+  </div>
+</footer>
+<script src="/public/js/jquery-1.8.3.min.js"></script>
+<script src="/public/js/overview.js"></script>
 </body>
 </html>
+<!--当前账户信息: 金币:{$account.coin}  金币券:{$account.coin_tic}
+<form action="" method='post'>
+数量:<input type='text' name='num' value=''>
+<input type='submit'>
+</form>--!>

@@ -2,6 +2,8 @@
 .o_information{
 	float:left;
 	width:100%;
+	min-height:400px;
+	margin-top:20px;
 }
 .o_information_left{
 	float:left;
@@ -31,6 +33,7 @@
 .o_information_right{
 	float:right;
 	width:72%;
+	padding-bottom:40px;
 }
 .title4 {
     padding-bottom: 10px;
@@ -323,4 +326,118 @@ span.descriptor{
     margin-bottom: 20px;
     background-color: #ccccca;
     border: 0;
+}
+.payment{
+	position:relative;
+	cursor:pointer;
+}
+.payment em{
+	float:left;
+	width:100%;
+	height:100%;
+	color:#427DC2;
+}
+.o_information_name{
+	color:#427DC2;
+	cursor:pointer;
+}
+.payment ul{
+	position:absolute;
+	top:45px;
+	left:20px;
+	width:100px;
+	text-align:center;
+	background-color:#F9F8F5;
+	border-radius:2px;
+	display:none;
+}
+.payment ul li a{
+	float:left;
+	width:100%;
+	height:30px;
+	line-height:30px;
+	color:#444;
+}
+.payment ul li a:hover{
+	background-color:#444;
+	color:#fff;
+}
+.payment ul.show{
+	display:block;
+}
+.o_information_account{
+	float:left;
+	width:100%;
+	height:40px;
+	line-height:40px;
+	color:#333;
+}
+.o_information_number{
+	float:left;
+	width:100%;
+	height: 35px;
+    line-height: 35px;
+	margin-bottom:10px;
+}
+.o_information_number em{
+	float:left;
+	margin-right:15px;
+	color:#333;
+}
+.o_information_number  input{
+	float:left;
+	height: 35px;
+    line-height: 35px;
+    font-size: 14px;
+    color: #555555;
+    vertical-align: middle;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+    -webkit-transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+    -webkit-transition: all border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s ease-out;
+    -moz-transition: all border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s ease-out;
+    -o-transition: all border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s ease-out;
+    transition: border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s;
+    transition: all border-color ease-in-out 0.15s,box-shadow ease-in-out 0.15s ease-out;
+}
+.o_information_determine{
+	float: left;
+    width: 236px;
+    height: 35px;
+    line-height: 35px;
+    border: 1px solid rgba(255,255,255,.6);
+    border-radius: 2px;
+    color: #fff;
+    font-size: 14px;
+    background: #427DC2;
+	border-radius:4px;
+    cursor: pointer;
+	margin:10px 0;
+}
+.o_information_hide{
+	display:none;
+}
+.open_account{
+	float:left;
+	width:100%;
+	text-align:center;
+}
+.open_account h2{
+	color:#F00;
+	margin-bottom:20px;
+}
+.open_account .o_information_number input{
+	width:220px;
+	padding-left:10px;
+}
+.open_account .o_information_determine{
+	width:297px;
+}
+.open_account .o_information_number,
+.open_account .o_information_determine{
+	margin-left:250px;
 }
